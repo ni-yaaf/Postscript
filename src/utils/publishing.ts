@@ -1,0 +1,801 @@
+import JSZip from 'jszip';
+import type { Letter, PublicLetter, PublicLettersIndex } from '../types/letter';
+import { escapeHtml, sanitizeExternalUrl, sanitizeHtml } from './sanitize';
+import {
+  countWords,
+  createExcerpt,
+  estimateReadingTime,
+  formatReadableDate,
+  slugify,
+} from './text';
+
+export function isLetterIncludedInPublicBuild(letter: Letter): boolean {
+  return (
+    letter.status === 'ready' ||
+    letter.status === 'pending' ||
+    letter.status === 'published' ||
+    letter.status === 'updated'
+  );
+}
+
+export function letterToPublicLetter(letter: Letter): PublicLetter {
+  const safeHtml = sanitizeHtml(letter.contentHtml);
+  const words = countWords(safeHtml, true);
+  const now = new Date().toISOString();
+  return {
+    slug: slugify(letter.slug || letter.title),
+    title: letter.title.trim() || 'Untitled Letter',
+    subtitle: letter.subtitle.trim(),
+    excerpt: createExcerpt(safeHtml, 190),
+    contentHtml: safeHtml,
+    wordCount: words,
+    readingTimeMinutes: estimateReadingTime(words),
+    publishedAt: letter.publication.publishedAt || now,
+    updatedAt: letter.updatedAt || now,
+    redditPost: {
+      title: letter.redditPost.title.trim(),
+      username: letter.redditPost.username.trim(),
+      subreddit: letter.redditPost.subreddit.trim(),
+      url: sanitizeExternalUrl(letter.redditPost.url),
+      postDate: letter.redditPost.postDate.trim(),
+      content: letter.redditPost.content.trim(),
+      imageUrl: sanitizeExternalUrl(letter.redditPost.imageUrl),
+    },
+  };
+}
+
+export function buildPublicLettersIndex(letters: Letter[]): PublicLettersIndex {
+  const publicLetters = letters
+    .filter(isLetterIncludedInPublicBuild)
+    .map(letterToPublicLetter)
+    .sort(
+      (a, b) =>
+        new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+    );
+
+  return {
+    version: 1,
+    updatedAt: new Date().toISOString(),
+    letters: publicLetters,
+  };
+}
+
+export interface StaticLetterOptions {
+  recipientLabel?: string;
+  paperStyle?: 'cream' | 'dark';
+  showDropCaps?: boolean;
+}
+
+export function generateStaticLetterHtml(
+  letter: PublicLetter,
+  options: StaticLetterOptions = {}
+): string {
+  const titleEsc = escapeHtml(letter.title);
+  const subtitleEsc = escapeHtml(letter.subtitle);
+  const descEsc = escapeHtml(letter.excerpt);
+  const dateEsc = escapeHtml(formatReadableDate(letter.publishedAt));
+  const recipientEsc = escapeHtml(options.recipientLabel?.trim() || 'Neonate');
+  const slugEsc = slugify(letter.slug || letter.title);
+  const paperStyle = options.paperStyle === 'dark' ? 'dark' : 'cream';
+  const showDropCaps = options.showDropCaps !== false;
+  const safeContent = sanitizeHtml(letter.contentHtml);
+
+  const shortPostmarkDate = (() => {
+    const parsed = new Date(letter.publishedAt);
+    if (Number.isNaN(parsed.getTime())) return 'KEPT';
+    return escapeHtml(
+      parsed
+        .toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+        .toUpperCase()
+    );
+  })();
+
+  const hasRedditRef = Boolean(
+    letter.redditPost.title ||
+      letter.redditPost.content ||
+      letter.redditPost.url ||
+      letter.redditPost.subreddit
+  );
+
+  const redditMetaParts = [
+    letter.redditPost.subreddit
+      ? `r/${escapeHtml(letter.redditPost.subreddit.replace(/^r\//i, ''))}`
+      : '',
+    letter.redditPost.username
+      ? `u/${escapeHtml(letter.redditPost.username.replace(/^u\//i, ''))}`
+      : '',
+    letter.redditPost.postDate ? escapeHtml(letter.redditPost.postDate) : '',
+  ].filter(Boolean);
+
+  const safeRedditUrl = sanitizeExternalUrl(letter.redditPost.url);
+  const safeImageUrl = sanitizeExternalUrl(letter.redditPost.imageUrl);
+
+  const redditSectionHtml = hasRedditRef
+    ? `
+      <details class="reddit-ref">
+        <summary>
+          <span class="reddit-summary-left">
+            <span class="reddit-kicker">Written in reply to</span>
+            <span class="reddit-title">${
+              letter.redditPost.title
+                ? escapeHtml(letter.redditPost.title)
+                : 'your Reddit post'
+            }</span>
+          </span>
+          <span class="reddit-toggle">Read note</span>
+        </summary>
+        <div class="reddit-body">
+          ${redditMetaParts.length ? `<p class="reddit-meta">${redditMetaParts.join(' · ')}</p>` : ''}
+          ${
+            letter.redditPost.content
+              ? `<div class="reddit-text">${escapeHtml(letter.redditPost.content).replace(/\n/g, '<br />')}</div>`
+              : ''
+          }
+          ${
+            safeImageUrl
+              ? `<p class="reddit-image-wrap"><img src="${escapeHtml(safeImageUrl)}" alt="Original post attachment" referrerpolicy="no-referrer" /></p>`
+              : ''
+          }
+          ${
+            safeRedditUrl
+              ? `<p class="reddit-link-wrap"><a href="${escapeHtml(safeRedditUrl)}" target="_blank" rel="noopener noreferrer">View original post on Reddit ↗</a></p>`
+              : ''
+          }
+        </div>
+      </details>`
+    : '';
+
+  const postmarkStampHtml = `
+    <div class="postmark-group" aria-hidden="true">
+      <svg width="46" height="46" viewBox="0 0 52 52" fill="none" class="postmark-svg">
+        <circle cx="26" cy="26" r="22" stroke="currentColor" stroke-width="1" stroke-dasharray="3 2" />
+        <circle cx="26" cy="26" r="16" stroke="currentColor" stroke-width="0.8" />
+        <text x="26" y="23" text-anchor="middle" fill="currentColor" font-size="6" letter-spacing="1.2" font-family="Plus Jakarta Sans, sans-serif">POSTSCRIPT</text>
+        <text x="26" y="32" text-anchor="middle" fill="currentColor" font-size="6.5" font-weight="600" letter-spacing="0.8" font-family="JetBrains Mono, monospace">${shortPostmarkDate}</text>
+      </svg>
+      <div class="postage-stamp">
+        <svg width="20" height="22" viewBox="0 0 20 22" fill="none">
+          <path d="M10 19V5M10 13C7.5 13 5.8 11.2 5.5 8.5C8 8.5 9.6 10.2 10 13ZM10 10.5C12.5 10.5 14.2 8.7 14.5 6C12 6 10.4 7.7 10 10.5Z" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+    </div>`;
+
+  const waxSealSvg = `
+    <svg width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <circle cx="16" cy="16" r="12.5" fill="currentColor" fill-opacity="0.14" stroke="currentColor" stroke-width="1.15" stroke-opacity="0.8" />
+      <circle cx="16" cy="16" r="9.2" stroke="currentColor" stroke-width="0.85" stroke-opacity="0.45" stroke-dasharray="2 2" />
+      <path d="M16 10.5L17.3 14.7L21.5 16L17.3 17.3L16 21.5L14.7 17.3L10.5 16L14.7 14.7L16 10.5Z" stroke="currentColor" stroke-width="1.15" stroke-linejoin="round" />
+    </svg>`;
+
+  return `<!doctype html>
+<html lang="en" data-paper="${paperStyle}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>${titleEsc} — Postscript</title>
+    <meta name="description" content="${descEsc}" />
+    <meta property="og:title" content="${titleEsc}" />
+    <meta property="og:description" content="${descEsc}" />
+    <meta property="og:type" content="article" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="${titleEsc}" />
+    <meta name="twitter:description" content="${descEsc}" />
+    <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <script>
+      document.documentElement.classList.add('has-js');
+    </script>
+    <style>
+      :root {
+        --bg: #120E0C;
+        --bg-2: #1A1411;
+        --border-desk: #342A22;
+        --border-desk-subtle: #271F19;
+        --desk-text: #EFE7DA;
+        --desk-text-2: #B8AA97;
+        --desk-muted: #877A6A;
+        --desk-accent: #C59F59;
+        --olive: #8A9672;
+        --seal: #A65848;
+
+        --sheet-bg: #F6EFE2;
+        --sheet-edge: #EFE5D3;
+        --sheet-border: #DDD0BA;
+        --sheet-ink: #261E18;
+        --sheet-ink-2: #5D4F42;
+        --sheet-muted: #847463;
+        --sheet-accent: #936A25;
+        --sheet-slip: #EDE3D1;
+        --sheet-olive: #636E4E;
+      }
+      html[data-paper="dark"] {
+        --sheet-bg: #1E1814;
+        --sheet-edge: #181310;
+        --sheet-border: #332922;
+        --sheet-ink: #EFE7DA;
+        --sheet-ink-2: #B8AA97;
+        --sheet-muted: #877A6A;
+        --sheet-accent: #C59F59;
+        --sheet-slip: #261F1A;
+        --sheet-olive: #8A9672;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background-color: var(--bg);
+        background-image:
+          radial-gradient(circle at 18% 12%, rgba(239, 231, 218, 0.015) 0%, transparent 45%),
+          radial-gradient(circle at 82% 88%, rgba(239, 231, 218, 0.015) 0%, transparent 45%);
+        color: var(--desk-text);
+        font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        line-height: 1.75;
+      }
+      .topbar {
+        border-bottom: 1px solid var(--border-desk-subtle);
+        background: rgba(18, 14, 12, 0.9);
+        padding: 1rem 1.5rem;
+      }
+      .topbar-inner {
+        max-width: 780px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .brand {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: 1.55rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        color: var(--desk-text);
+        text-decoration: none;
+      }
+      .back-link {
+        font-size: 0.84rem;
+        color: var(--desk-text-2);
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: color 0.15s ease, border-color 0.15s ease;
+        background: none;
+        border-top: 0;
+        border-left: 0;
+        border-right: 0;
+        padding: 0;
+        cursor: pointer;
+        font-family: inherit;
+      }
+      .back-link:hover {
+        color: var(--desk-accent);
+        border-bottom-color: var(--desk-accent);
+      }
+      main {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 2.75rem 1.25rem 4.5rem;
+      }
+      .envelope-wrap {
+        display: none;
+        max-width: 580px;
+        margin: 1.5rem auto 0;
+      }
+      html.has-js[data-state="sealed"] .envelope-wrap {
+        display: block;
+      }
+      html.has-js[data-state="sealed"] .letter-wrap {
+        display: none;
+      }
+      .envelope-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 12px;
+        background-color: var(--sheet-bg);
+        background-image: linear-gradient(155deg, rgba(255, 255, 255, 0.18) 0%, transparent 48%, rgba(140, 110, 75, 0.08) 100%);
+        color: var(--sheet-ink);
+        border: 1px solid var(--sheet-border);
+        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) inset, 0 28px 64px -24px rgba(0, 0, 0, 0.75);
+        padding: 2.75rem 2.5rem;
+      }
+      .envelope-flap {
+        pointer-events: none;
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 78px;
+        border-bottom: 1px solid var(--sheet-border);
+        opacity: 0.65;
+        clip-path: polygon(0 0, 100% 0, 50% 100%);
+        background: rgba(130, 100, 68, 0.05);
+      }
+      .envelope-center {
+        text-align: center;
+        margin: 2.4rem 0;
+      }
+      .envelope-reply {
+        margin: 0.75rem auto 0;
+        max-width: 28rem;
+        font-size: 0.78rem;
+        font-style: italic;
+        color: var(--sheet-muted);
+      }
+      .envelope-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.65rem;
+      }
+      .open-seal-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.7rem;
+        min-height: 48px;
+        padding: 0.55rem 1.5rem;
+        border-radius: 999px;
+        border: 1px solid rgba(166, 88, 72, 0.45);
+        background: rgba(166, 88, 72, 0.1);
+        color: var(--seal);
+        font-family: inherit;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.18s ease;
+      }
+      .open-seal-btn:hover {
+        background: var(--seal);
+        border-color: var(--seal);
+        color: #FAF4E9;
+      }
+      .envelope-caption {
+        font-family: "Caveat", cursive;
+        font-size: 1.05rem;
+        color: var(--sheet-muted);
+      }
+      .sheet {
+        background-color: var(--sheet-bg);
+        background-image:
+          radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.16), transparent 65%),
+          linear-gradient(180deg, transparent 0%, var(--sheet-edge) 100%);
+        color: var(--sheet-ink);
+        border: 1px solid var(--sheet-border);
+        border-radius: 12px;
+        padding: 3rem 2.75rem;
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, 0.25) inset,
+          0 2px 6px rgba(0, 0, 0, 0.14),
+          0 28px 64px -26px rgba(0, 0, 0, 0.72);
+      }
+      @keyframes letterUnfold {
+        from { opacity: 0; transform: translateY(10px) scale(0.99); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+      .letter-wrap {
+        animation: letterUnfold 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+      }
+      @media (max-width: 600px) {
+        .sheet, .envelope-card { padding: 2rem 1.35rem; }
+      }
+      .header-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .salutation {
+        font-family: "Caveat", "Cormorant Garamond", cursive;
+        font-size: 1.65rem;
+        line-height: 1.15;
+        color: var(--sheet-ink-2);
+        margin: 0;
+      }
+      .meta {
+        font-size: 0.78rem;
+        color: var(--sheet-muted);
+        letter-spacing: 0.04em;
+        margin: 0.25rem 0 0;
+      }
+      .postmark-group {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        flex-shrink: 0;
+        user-select: none;
+      }
+      .postmark-svg {
+        color: var(--sheet-muted);
+        opacity: 0.75;
+      }
+      .postage-stamp {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 46px;
+        border: 1px dashed var(--sheet-border);
+        border-radius: 2px;
+        background: var(--sheet-slip);
+        color: var(--sheet-olive);
+      }
+      h1.title {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: clamp(2.15rem, 4.6vw, 3rem);
+        font-weight: 500;
+        line-height: 1.15;
+        color: var(--sheet-ink);
+        margin: 1.35rem 0 0.65rem;
+        text-wrap: balance;
+      }
+      .subtitle {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-style: italic;
+        font-size: 1.38rem;
+        color: var(--sheet-ink-2);
+        margin: 0;
+        line-height: 1.4;
+      }
+      .ornament {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin: 2rem 0;
+        color: var(--sheet-accent);
+      }
+      .ornament::before, .ornament::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--sheet-border);
+      }
+      .reddit-ref {
+        background: var(--sheet-slip);
+        border: 1px solid var(--sheet-border);
+        border-radius: 8px;
+        padding: 0.9rem 1.2rem;
+        margin-bottom: 2.25rem;
+      }
+      .reddit-ref summary {
+        list-style: none;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+      }
+      .reddit-ref summary::-webkit-details-marker { display: none; }
+      .reddit-summary-left { min-width: 0; display: flex; flex-direction: column; }
+      .reddit-kicker {
+        font-family: "Caveat", cursive;
+        font-size: 1.15rem;
+        line-height: 1.05;
+        color: var(--sheet-accent);
+      }
+      .reddit-title {
+        font-size: 0.88rem;
+        color: var(--sheet-ink);
+        margin-top: 0.2rem;
+      }
+      .reddit-toggle {
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: var(--sheet-accent);
+        white-space: nowrap;
+      }
+      .reddit-body {
+        margin-top: 0.95rem;
+        padding-top: 0.95rem;
+        border-top: 1px solid var(--sheet-border);
+        font-size: 0.9rem;
+        color: var(--sheet-ink-2);
+      }
+      .reddit-meta { font-size: 0.78rem; color: var(--sheet-muted); margin: 0 0 0.75rem; }
+      .reddit-text { line-height: 1.65; }
+      .reddit-image-wrap img { max-width: 100%; border-radius: 8px; margin-top: 0.75rem; border: 1px solid var(--sheet-border); }
+      .reddit-link-wrap { margin: 0.9rem 0 0; }
+      .reddit-link-wrap a { color: var(--sheet-accent); text-decoration: none; font-size: 0.84rem; font-weight: 500; }
+      .letter-body {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: 1.32rem;
+        line-height: 1.85;
+        color: var(--sheet-ink);
+        word-break: break-word;
+      }
+      .letter-body.dropcap > p:first-of-type::first-letter {
+        font-size: 3.5rem;
+        float: left;
+        line-height: 0.85;
+        padding: 0.08em 0.14em 0 0;
+        font-weight: 500;
+        color: var(--sheet-accent);
+      }
+      .letter-body p { margin: 0 0 1.3em; }
+      .letter-body h1, .letter-body h2, .letter-body h3 {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        color: var(--sheet-ink);
+        font-weight: 600;
+        line-height: 1.28;
+        margin: 1.75em 0 0.65em;
+      }
+      .letter-body blockquote {
+        margin: 1.75em 0;
+        padding: 1.1em 1.4em;
+        border-top: 1px solid var(--sheet-border);
+        border-bottom: 1px solid var(--sheet-border);
+        font-style: italic;
+        color: var(--sheet-ink-2);
+      }
+      .letter-body ul, .letter-body ol { padding-left: 1.5em; margin-bottom: 1.3em; }
+      .letter-body u { text-decoration: underline; text-decoration-color: var(--sheet-accent); text-underline-offset: 4px; }
+      .letter-body hr { border: 0; height: 1px; background: var(--sheet-border); margin: 2em auto; width: 42%; }
+      .end-mark {
+        margin-top: 3.25rem;
+        padding-top: 1.75rem;
+        border-top: 1px solid var(--sheet-border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .end-mark-left {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: var(--seal);
+      }
+      .end-phrase {
+        font-family: "Caveat", cursive;
+        font-size: 1.55rem;
+        color: var(--sheet-ink-2);
+      }
+      .sprig-svg {
+        color: var(--sheet-olive);
+        opacity: 0.75;
+      }
+      .collection-return {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.25rem;
+        margin-top: 2rem;
+      }
+      .dot-sep {
+        color: var(--border-desk);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a href="../../" class="brand">Postscript</a>
+        <a href="../../" class="back-link">All letters</a>
+      </div>
+    </header>
+    <main>
+      <div class="envelope-wrap" id="envelope-view">
+        <div class="envelope-card">
+          <div class="envelope-flap" aria-hidden="true"></div>
+          <div class="header-row">
+            <span class="salutation" style="font-size:1.3rem;color:var(--sheet-muted);">${dateEsc}</span>
+            ${postmarkStampHtml}
+          </div>
+          <div class="envelope-center">
+            <p class="salutation">For ${recipientEsc},</p>
+            <h1 class="title" style="margin-top:0.5rem;">${titleEsc}</h1>
+            ${
+              letter.redditPost.title
+                ? `<p class="envelope-reply">In reply to: ${escapeHtml(letter.redditPost.title)}</p>`
+                : ''
+            }
+          </div>
+          <div class="envelope-actions">
+            <button type="button" class="open-seal-btn" id="open-envelope-btn">
+              ${waxSealSvg}
+              <span>Open letter</span>
+            </button>
+            <span class="envelope-caption">A page kept just for you</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="letter-wrap" id="letter-view">
+        <div class="sheet">
+          <div class="header-row">
+            <div>
+              <p class="salutation">For ${recipientEsc},</p>
+              <p class="meta">${dateEsc}</p>
+            </div>
+            ${postmarkStampHtml}
+          </div>
+          <h1 class="title">${titleEsc}</h1>
+          ${subtitleEsc ? `<p class="subtitle">${subtitleEsc}</p>` : ''}
+          <div class="ornament" aria-hidden="true">
+            <svg width="36" height="16" viewBox="0 0 36 16" fill="none">
+              <path d="M4 10C10 9.5 14.5 7.5 18 4C21.5 7.5 26 9.5 32 10" stroke="currentColor" stroke-width="1.05" stroke-linecap="round" />
+              <path d="M18 4V13" stroke="currentColor" stroke-width="1.05" stroke-linecap="round" />
+              <path d="M18 8.5C15.8 8.5 14.2 7.2 13.8 5.4C15.7 5.3 17.3 6.6 18 8.5Z" stroke="currentColor" stroke-width="1" stroke-linejoin="round" />
+              <path d="M18 9.5C20.2 9.5 21.8 8.2 22.2 6.4C20.3 6.3 18.7 7.6 18 9.5Z" stroke="currentColor" stroke-width="1" stroke-linejoin="round" />
+            </svg>
+          </div>
+          ${redditSectionHtml}
+          <article class="letter-body${showDropCaps ? ' dropcap' : ''}">
+            ${safeContent}
+          </article>
+          <div class="end-mark">
+            <div class="end-mark-left">
+              ${waxSealSvg}
+              <span class="end-phrase">End of letter.</span>
+            </div>
+            <svg width="36" height="36" viewBox="0 0 56 56" fill="none" class="sprig-svg" aria-hidden="true">
+              <path d="M14 44C20 35 28 24 41 13" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" />
+              <path d="M23 32C18 31 15 27 15 22C20 22 23 26 23 32Z" stroke="currentColor" stroke-width="1.05" stroke-linejoin="round" />
+              <path d="M26 28C32 29 36 27 38 22C32 21 28 23 26 28Z" stroke="currentColor" stroke-width="1.05" stroke-linejoin="round" />
+              <path d="M32 21C28 19 26 15 27 11C31 12 33 16 32 21Z" stroke="currentColor" stroke-width="1.05" stroke-linejoin="round" />
+            </svg>
+          </div>
+        </div>
+        <div class="collection-return">
+          <a href="../../" class="back-link">← All letters in the Reading Room</a>
+          <span class="dot-sep" aria-hidden="true">·</span>
+          <button type="button" class="back-link" id="refold-envelope-btn">Refold envelope</button>
+        </div>
+      </div>
+    </main>
+    <script>
+      (function () {
+        var key = 'ps_opened_${slugEsc}';
+        var root = document.documentElement;
+        try {
+          if (sessionStorage.getItem(key) !== '1') {
+            root.setAttribute('data-state', 'sealed');
+          }
+        } catch (e) {
+          root.setAttribute('data-state', 'sealed');
+        }
+        var openBtn = document.getElementById('open-envelope-btn');
+        var refoldBtn = document.getElementById('refold-envelope-btn');
+        if (openBtn) {
+          openBtn.addEventListener('click', function () {
+            root.removeAttribute('data-state');
+            try { sessionStorage.setItem(key, '1'); } catch (e) {}
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
+        }
+        if (refoldBtn) {
+          refoldBtn.addEventListener('click', function () {
+            root.setAttribute('data-state', 'sealed');
+            try { sessionStorage.removeItem(key); } catch (e) {}
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>
+`;
+}
+
+export interface PublicationPackageSummary {
+  publicIndex: PublicLettersIndex;
+  includedLetters: PublicLetter[];
+  unpublishedToRemove: string[];
+  manifestText: string;
+}
+
+export function buildPublicationManifest(
+  allLetters: Letter[],
+  publicIndex: PublicLettersIndex
+): PublicationPackageSummary {
+  const includedSlugs = new Set(publicIndex.letters.map((l) => l.slug));
+  const unpublishedToRemove = allLetters
+    .filter(
+      (l) =>
+        l.status === 'unpublished' &&
+        l.publication.previouslyPublishedSlug &&
+        !includedSlugs.has(l.publication.previouslyPublishedSlug)
+    )
+    .map((l) => l.publication.previouslyPublishedSlug as string);
+
+  const lines: string[] = [
+    'POSTSCRIPT — PUBLICATION PACKAGE MANIFEST',
+    `Generated: ${new Date().toUTCString()}`,
+    '',
+    `Total published letters in this package: ${publicIndex.letters.length}`,
+    '',
+    '1. FILES INCLUDED IN THIS PACKAGE:',
+    '   - public/data/letters.json',
+    ...publicIndex.letters.map(
+      (l) => `   - public/letters/${l.slug}/index.html   ("${l.title}")`
+    ),
+  ];
+
+  if (unpublishedToRemove.length > 0) {
+    lines.push(
+      '',
+      '2. UNPUBLISHED LETTERS TO REMOVE FROM YOUR REPOSITORY:',
+      '   Delete these folders from your GitHub repository if they exist:',
+      ...unpublishedToRemove.map((slug) => `   - public/letters/${slug}/`)
+    );
+  }
+
+  lines.push(
+    '',
+    'HOW TO PUBLISH ON GITHUB (NO PROGRAMMING REQUIRED):',
+    '1. Unzip this downloaded archive on your computer.',
+    '2. Open your Postscript repository on GitHub.',
+    '3. Drag and drop the unzipped "public" folder onto the repository upload page',
+    '   (or click "Add file" -> "Upload files" in GitHub).',
+    '4. Click "Commit changes".',
+    '5. Wait ~1 minute for GitHub Actions to finish building.',
+    '6. Your letters will then be live at their permanent Reading Room URLs.'
+  );
+
+  return {
+    publicIndex,
+    includedLetters: publicIndex.letters,
+    unpublishedToRemove,
+    manifestText: lines.join('\n'),
+  };
+}
+
+export async function createPublicationZipBlob(
+  allLetters: Letter[],
+  options: StaticLetterOptions = {}
+): Promise<{ blob: Blob; summary: PublicationPackageSummary }> {
+  const publicIndex = buildPublicLettersIndex(allLetters);
+  const summary = buildPublicationManifest(allLetters, publicIndex);
+
+  const zip = new JSZip();
+  zip.file(
+    'public/data/letters.json',
+    JSON.stringify(publicIndex, null, 2) + '\n'
+  );
+
+  for (const letter of publicIndex.letters) {
+    zip.file(
+      `public/letters/${letter.slug}/index.html`,
+      generateStaticLetterHtml(letter, options)
+    );
+  }
+
+  zip.file('PUBLISH_MANIFEST.txt', summary.manifestText);
+
+  const blob = await zip.generateAsync({ type: 'blob' });
+  return { blob, summary };
+}
+
+export function triggerDownload(
+  content: Blob | string,
+  filename: string,
+  mimeType = 'text/plain;charset=utf-8'
+): void {
+  const blob =
+    content instanceof Blob ? content : new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+export function buildPublicShareUrl(
+  slug: string,
+  configuredSiteBaseUrl?: string
+): string {
+  const cleanSlug = slugify(slug);
+  if (configuredSiteBaseUrl && sanitizeExternalUrl(configuredSiteBaseUrl)) {
+    const normalized = configuredSiteBaseUrl.replace(/\/+$/, '');
+    return `${normalized}/letters/${cleanSlug}/`;
+  }
+  const base = (import.meta.env.BASE_URL || '/').replace(/\/+$/, '');
+  return `${window.location.origin}${base}/letters/${cleanSlug}/`;
+}

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Postscript — A Place for Words</title>
+    <script>
+      (function () {
+        // GitHub Pages SPA fallback: preserves the requested URL and redirects
+        // to the repository root so client-side routing can render the letter.
+        var l = window.location;
+        var pathParts = l.pathname.split('/').filter(Boolean);
+        var isUserSite = l.hostname.endsWith('.github.io') && pathParts.length > 0;
+        // Detect if hosted under /<repo>/ or /
+        var base = '/';
+        if (isUserSite && !['letters', 'reading-room', 'desk', 'preview'].includes(pathParts[0])) {
+          base = '/' + pathParts[0] + '/';
+        }
+        try {
+          sessionStorage.setItem('postscript_spa_redirect', l.href);
+        } catch (e) {}
+        l.replace(l.protocol + '//' + l.host + base);
+      })();
+    </script>
+  </head>
+  <body style="background:#14110F;color:#EFE9DF;font-family:Georgia,serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;">
+    <p style="opacity:0.75;font-size:15px;">Opening Postscript…</p>
+  </body>
+</html>

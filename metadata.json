@@ -1,0 +1,6 @@
+{
+  "name": "Postscript",
+  "description": "A dark, warm digital notebook for preserving long-form letters and sharing published correspondence.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

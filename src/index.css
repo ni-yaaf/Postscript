@@ -1,0 +1,320 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --ps-bg: #F5EFE4;
+  --ps-bg-secondary: #ECE3D4;
+  --ps-surface: #FAF4E9;
+  --ps-surface-elevated: #E4D9C7;
+  --ps-border: #D6C9B6;
+  --ps-border-subtle: #E5DBCB;
+  --ps-text: #241C16;
+  --ps-text-secondary: #5B4E41;
+  --ps-text-muted: #7C6E5E;
+  --ps-accent: #946D29;
+  --ps-accent-hover: #7B581E;
+  --ps-accent-soft: rgba(148, 109, 41, 0.12);
+  --ps-olive: #636E4E;
+  --ps-sage: #586957;
+  --ps-seal: #944A3D;
+  --ps-danger: #9B3B36;
+  --ps-paper-grain: rgba(36, 28, 22, 0.02);
+  --ps-selection: rgba(148, 109, 41, 0.22);
+
+  /* Cream & parchment letter sheet tokens */
+  --ps-sheet-bg: #F6EFE2;
+  --ps-sheet-bg-edge: #EFE5D3;
+  --ps-sheet-border: #DDD0BA;
+  --ps-sheet-ink: #261E18;
+  --ps-sheet-ink-2: #5D4F42;
+  --ps-sheet-muted: #847463;
+  --ps-sheet-accent: #936A25;
+  --ps-sheet-rule: rgba(114, 90, 64, 0.085);
+  --ps-sheet-slip: #EDE3D1;
+}
+
+.dark {
+  --ps-bg: #120E0C;
+  --ps-bg-secondary: #1A1411;
+  --ps-surface: #211A16;
+  --ps-surface-elevated: #2A211C;
+  --ps-border: #342A22;
+  --ps-border-subtle: #271F19;
+  --ps-text: #EFE7DA;
+  --ps-text-secondary: #B8AA97;
+  --ps-text-muted: #877A6A;
+  --ps-accent: #C59F59;
+  --ps-accent-hover: #D4B16E;
+  --ps-accent-soft: rgba(197, 159, 89, 0.14);
+  --ps-olive: #8A9672;
+  --ps-sage: #8C9B89;
+  --ps-seal: #A65848;
+  --ps-danger: #C96A63;
+  --ps-paper-grain: rgba(239, 231, 218, 0.015);
+  --ps-selection: rgba(197, 159, 89, 0.24);
+}
+
+/* Optional dark-paper mode if author/reader switches to candlelight paper */
+html[data-paper="dark"] {
+  --ps-sheet-bg: #1E1814;
+  --ps-sheet-bg-edge: #181310;
+  --ps-sheet-border: #332922;
+  --ps-sheet-ink: #EFE7DA;
+  --ps-sheet-ink-2: #B8AA97;
+  --ps-sheet-muted: #877A6A;
+  --ps-sheet-accent: #C59F59;
+  --ps-sheet-rule: rgba(239, 231, 218, 0.05);
+  --ps-sheet-slip: #261F1A;
+}
+
+@layer base {
+  html {
+    background-color: var(--ps-bg);
+    color: var(--ps-text);
+    font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--ps-bg);
+    color: var(--ps-text);
+    background-image:
+      radial-gradient(circle at 18% 12%, var(--ps-paper-grain) 0%, transparent 45%),
+      radial-gradient(circle at 82% 88%, var(--ps-paper-grain) 0%, transparent 45%);
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: var(--ps-selection);
+  }
+}
+
+.font-serif-editorial {
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+}
+
+.font-handwritten {
+  font-family: "Caveat", "Cormorant Garamond", cursive;
+}
+
+.font-sans-ui {
+  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.font-mono-tabular {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Handcrafted cream/parchment letter sheet resting on the dark journal desk */
+.stationery-sheet {
+  background-color: var(--ps-sheet-bg);
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.16), transparent 65%),
+    linear-gradient(180deg, transparent 0%, var(--ps-sheet-bg-edge) 100%);
+  color: var(--ps-sheet-ink);
+  border: 1px solid var(--ps-sheet-border);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.25) inset,
+    0 2px 6px rgba(0, 0, 0, 0.14),
+    0 28px 64px -26px rgba(0, 0, 0, 0.72);
+  position: relative;
+}
+
+/* Subtle horizontal notebook rulings for writing & letter surfaces */
+.stationery-ruled {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(1.85em - 1px),
+    var(--ps-sheet-rule) calc(1.85em - 1px),
+    var(--ps-sheet-rule) 1.85em
+  );
+  background-position: 0 0.25em;
+}
+
+/* Folded envelope card resting on the dark desk */
+.envelope-card {
+  background-color: var(--ps-sheet-bg);
+  background-image:
+    linear-gradient(155deg, rgba(255, 255, 255, 0.18) 0%, transparent 48%, rgba(140, 110, 75, 0.08) 100%);
+  color: var(--ps-sheet-ink);
+  border: 1px solid var(--ps-sheet-border);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.3) inset,
+    0 28px 64px -24px rgba(0, 0, 0, 0.75);
+}
+
+/* Gentle page-opening transition */
+@keyframes letterUnfold {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-letter-unfold {
+  animation: letterUnfold 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Ink prose styling inside cream/parchment letter sheets */
+.letter-ink-prose {
+  color: var(--ps-sheet-ink);
+  line-height: 1.85;
+  letter-spacing: 0.006em;
+  word-break: break-word;
+}
+
+.letter-ink-prose > *:first-child {
+  margin-top: 0;
+}
+
+.letter-ink-prose > *:last-child {
+  margin-bottom: 0;
+}
+
+.letter-ink-prose p {
+  margin-top: 0;
+  margin-bottom: 1.3em;
+}
+
+.letter-ink-prose h1,
+.letter-ink-prose h2,
+.letter-ink-prose h3 {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  color: var(--ps-sheet-ink);
+  font-weight: 600;
+  line-height: 1.28;
+  margin-top: 1.75em;
+  margin-bottom: 0.65em;
+  text-wrap: balance;
+}
+
+.letter-ink-prose h1 {
+  font-size: 1.9em;
+}
+
+.letter-ink-prose h2 {
+  font-size: 1.48em;
+}
+
+.letter-ink-prose h3 {
+  font-size: 1.24em;
+}
+
+.letter-ink-prose strong {
+  font-weight: 600;
+  color: var(--ps-sheet-ink);
+}
+
+.letter-ink-prose em {
+  font-style: italic;
+}
+
+.letter-ink-prose u {
+  text-decoration: underline;
+  text-decoration-color: var(--ps-sheet-accent);
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1.2px;
+}
+
+.letter-ink-prose blockquote {
+  margin: 1.75em 0;
+  padding: 1.1em 1.4em;
+  border-top: 1px solid var(--ps-sheet-border);
+  border-bottom: 1px solid var(--ps-sheet-border);
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.2em;
+  font-style: italic;
+  line-height: 1.65;
+  color: var(--ps-sheet-ink-2);
+}
+
+.letter-ink-prose blockquote::before {
+  content: "“";
+  font-family: "Cormorant Garamond", Georgia, serif;
+  color: var(--ps-sheet-accent);
+  font-size: 1.7em;
+  line-height: 0;
+  vertical-align: -0.22em;
+  margin-right: 0.2em;
+}
+
+.letter-ink-prose ul {
+  list-style-type: disc;
+  padding-left: 1.5em;
+  margin-top: 0.5em;
+  margin-bottom: 1.3em;
+}
+
+.letter-ink-prose ol {
+  list-style-type: decimal;
+  padding-left: 1.5em;
+  margin-top: 0.5em;
+  margin-bottom: 1.3em;
+}
+
+.letter-ink-prose li {
+  margin-bottom: 0.35em;
+}
+
+.letter-ink-prose li p {
+  margin-bottom: 0.35em;
+}
+
+.letter-ink-prose hr {
+  border: 0;
+  height: 1px;
+  background: var(--ps-sheet-border);
+  margin: 2em auto;
+  width: 42%;
+}
+
+.letter-ink-prose ::selection {
+  background-color: rgba(147, 106, 37, 0.22);
+}
+
+.ProseMirror {
+  outline: none;
+  min-height: 440px;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--ps-sheet-muted);
+  pointer-events: none;
+  height: 0;
+  font-style: italic;
+}
+
+.postscript-dropcap > p:first-of-type::first-letter {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  float: left;
+  font-size: 3.5em;
+  line-height: 0.85;
+  padding-top: 0.08em;
+  padding-right: 0.14em;
+  font-weight: 500;
+  color: var(--ps-sheet-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
