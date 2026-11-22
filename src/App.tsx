@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DeskLayout } from './components/DeskLayout';
+import { PasswordGate } from './components/PasswordGate';
 import { ReadingRoomLayout } from './components/ReadingRoomLayout';
 import { ToastContainer, type ToastMessage } from './components/Toast';
 import { useRouter } from './hooks/useRouter';
@@ -42,6 +43,7 @@ export default function App() {
   const [publicLetters, setPublicLetters] = useState<PublicLetter[]>([]);
   const [publishTarget, setPublishTarget] = useState<Letter | null>(null);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
+  const [unlocked, setUnlocked] = useState(false);
 
   const addToast = useCallback(
     (text: string, tone: ToastMessage['tone'] = 'neutral') => {
@@ -332,6 +334,15 @@ export default function App() {
     setSettings({ ...DEFAULT_SETTINGS });
     addToast('All local notebook data cleared.', 'neutral');
   }, [addToast]);
+
+  if (!unlocked) {
+    return (
+      <>
+        <PasswordGate onUnlock={() => setUnlocked(true)} />
+        <ToastContainer toasts={toasts} onDismiss={dismissToast} />
+      </>
+    );
+  }
 
   // Public Reading Room Views
   if (route.name === 'reading-room' || route.name === 'desk-preview') {
