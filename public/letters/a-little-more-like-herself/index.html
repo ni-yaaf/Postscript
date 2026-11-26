@@ -1,0 +1,736 @@
+<!doctype html>
+<html lang="en" data-paper="cream">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A Little More Like Herself — Postscript</title>
+    <meta name="description" content="Kiddo... First of all.. I think you should stop downplaying how much this matters to you just because it might seem like a small thing to someone else... You found something you genuinely…" />
+    <meta property="og:title" content="A Little More Like Herself" />
+    <meta property="og:description" content="Kiddo... First of all.. I think you should stop downplaying how much this matters to you just because it might seem like a small thing to someone else... You found something you genuinely…" />
+    <meta property="og:type" content="article" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="A Little More Like Herself" />
+    <meta name="twitter:description" content="Kiddo... First of all.. I think you should stop downplaying how much this matters to you just because it might seem like a small thing to someone else... You found something you genuinely…" />
+    <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <script>
+      document.documentElement.classList.add('has-js');
+      document.documentElement.setAttribute('data-locked', 'true');
+    </script>
+    <style>
+      :root {
+        --bg: #120E0C;
+        --bg-2: #1A1411;
+        --border-desk: #342A22;
+        --border-desk-subtle: #271F19;
+        --desk-text: #EFE7DA;
+        --desk-text-2: #B8AA97;
+        --desk-muted: #877A6A;
+        --desk-accent: #C59F59;
+        --olive: #8A9672;
+        --seal: #A65848;
+
+        --sheet-bg: #F6EFE2;
+        --sheet-edge: #EFE5D3;
+        --sheet-border: #DDD0BA;
+        --sheet-ink: #261E18;
+        --sheet-ink-2: #5D4F42;
+        --sheet-muted: #847463;
+        --sheet-accent: #936A25;
+        --sheet-slip: #EDE3D1;
+        --sheet-olive: #636E4E;
+      }
+      html[data-paper="dark"] {
+        --sheet-bg: #1E1814;
+        --sheet-edge: #181310;
+        --sheet-border: #332922;
+        --sheet-ink: #EFE7DA;
+        --sheet-ink-2: #B8AA97;
+        --sheet-muted: #877A6A;
+        --sheet-accent: #C59F59;
+        --sheet-slip: #261F1A;
+        --sheet-olive: #8A9672;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background-color: var(--bg);
+        background-image:
+          radial-gradient(circle at 18% 12%, rgba(239, 231, 218, 0.015) 0%, transparent 45%),
+          radial-gradient(circle at 82% 88%, rgba(239, 231, 218, 0.015) 0%, transparent 45%);
+        color: var(--desk-text);
+        font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        line-height: 1.75;
+      }
+      .topbar {
+        border-bottom: 1px solid var(--border-desk-subtle);
+        background: rgba(18, 14, 12, 0.9);
+        padding: 1rem 1.5rem;
+      }
+      .topbar-inner {
+        max-width: 780px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .brand {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: 1.55rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        color: var(--desk-text);
+        text-decoration: none;
+      }
+      .back-link {
+        font-size: 0.84rem;
+        color: var(--desk-text-2);
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: color 0.15s ease, border-color 0.15s ease;
+        background: none;
+        border-top: 0;
+        border-left: 0;
+        border-right: 0;
+        padding: 0;
+        cursor: pointer;
+        font-family: inherit;
+      }
+      .back-link:hover {
+        color: var(--desk-accent);
+        border-bottom-color: var(--desk-accent);
+      }
+      main {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 2.75rem 1.25rem 4.5rem;
+      }
+      .gate-wrap {
+        display: none;
+        max-width: 440px;
+        margin: 3rem auto 0;
+      }
+      html.has-js[data-locked="true"] .topbar,
+      html.has-js[data-locked="true"] .envelope-wrap,
+      html.has-js[data-locked="true"] .letter-wrap {
+        display: none !important;
+      }
+      html.has-js[data-locked="true"] .gate-wrap {
+        display: block;
+      }
+      .gate-input-wrap {
+        position: relative;
+        margin-top: 0.4rem;
+      }
+      .gate-input {
+        width: 100%;
+        border-radius: 8px;
+        border: 1px solid var(--sheet-border);
+        background: var(--sheet-slip);
+        color: var(--sheet-ink);
+        padding: 0.65rem 2.5rem 0.65rem 0.85rem;
+        font-family: inherit;
+        font-size: 0.9rem;
+      }
+      .gate-input:focus {
+        outline: none;
+        border-color: var(--sheet-accent);
+      }
+      .gate-toggle-btn {
+        position: absolute;
+        right: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: 0;
+        color: var(--sheet-muted);
+        cursor: pointer;
+        padding: 0.25rem;
+        font-size: 0.76rem;
+      }
+      .gate-error {
+        margin: 0.75rem 0 0;
+        padding: 0.55rem 0.75rem;
+        border-radius: 8px;
+        border: 1px solid rgba(166, 88, 72, 0.4);
+        background: rgba(166, 88, 72, 0.1);
+        color: #9B3B36;
+        font-size: 0.78rem;
+      }
+      .gate-submit {
+        margin-top: 1rem;
+        width: 100%;
+        min-height: 46px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        border-radius: 8px;
+        border: 1px solid rgba(166, 88, 72, 0.5);
+        background: var(--seal);
+        color: #FAF4E9;
+        font-family: inherit;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+      }
+      .envelope-wrap {
+        display: none;
+        max-width: 580px;
+        margin: 1.5rem auto 0;
+      }
+      html.has-js[data-state="sealed"] .envelope-wrap {
+        display: block;
+      }
+      html.has-js[data-state="sealed"] .letter-wrap {
+        display: none;
+      }
+      .envelope-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 12px;
+        background-color: var(--sheet-bg);
+        background-image: linear-gradient(155deg, rgba(255, 255, 255, 0.18) 0%, transparent 48%, rgba(140, 110, 75, 0.08) 100%);
+        color: var(--sheet-ink);
+        border: 1px solid var(--sheet-border);
+        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) inset, 0 28px 64px -24px rgba(0, 0, 0, 0.75);
+        padding: 2.75rem 2.5rem;
+      }
+      .envelope-flap {
+        pointer-events: none;
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 78px;
+        border-bottom: 1px solid var(--sheet-border);
+        opacity: 0.65;
+        clip-path: polygon(0 0, 100% 0, 50% 100%);
+        background: rgba(130, 100, 68, 0.05);
+      }
+      .envelope-center {
+        text-align: center;
+        margin: 2.4rem 0;
+      }
+      .envelope-reply {
+        margin: 0.75rem auto 0;
+        max-width: 28rem;
+        font-size: 0.78rem;
+        font-style: italic;
+        color: var(--sheet-muted);
+      }
+      .envelope-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.65rem;
+      }
+      .open-seal-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.7rem;
+        min-height: 48px;
+        padding: 0.55rem 1.5rem;
+        border-radius: 999px;
+        border: 1px solid rgba(166, 88, 72, 0.45);
+        background: rgba(166, 88, 72, 0.1);
+        color: var(--seal);
+        font-family: inherit;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.18s ease;
+      }
+      .open-seal-btn:hover {
+        background: var(--seal);
+        border-color: var(--seal);
+        color: #FAF4E9;
+      }
+      .envelope-caption {
+        font-family: "Caveat", cursive;
+        font-size: 1.05rem;
+        color: var(--sheet-muted);
+      }
+      .sheet {
+        background-color: var(--sheet-bg);
+        background-image:
+          radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.16), transparent 65%),
+          linear-gradient(180deg, transparent 0%, var(--sheet-edge) 100%);
+        color: var(--sheet-ink);
+        border: 1px solid var(--sheet-border);
+        border-radius: 12px;
+        padding: 3rem 2.75rem;
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, 0.25) inset,
+          0 2px 6px rgba(0, 0, 0, 0.14),
+          0 28px 64px -26px rgba(0, 0, 0, 0.72);
+      }
+      @keyframes letterUnfold {
+        from { opacity: 0; transform: translateY(10px) scale(0.99); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+      .letter-wrap {
+        animation: letterUnfold 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+      }
+      @media (max-width: 600px) {
+        .sheet, .envelope-card { padding: 2rem 1.35rem; }
+      }
+      .header-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .salutation {
+        font-family: "Caveat", "Cormorant Garamond", cursive;
+        font-size: 1.65rem;
+        line-height: 1.15;
+        color: var(--sheet-ink-2);
+        margin: 0;
+      }
+      .meta {
+        font-size: 0.78rem;
+        color: var(--sheet-muted);
+        letter-spacing: 0.04em;
+        margin: 0.25rem 0 0;
+      }
+      .postmark-group {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        flex-shrink: 0;
+        user-select: none;
+      }
+      .postmark-svg {
+        color: var(--sheet-muted);
+        opacity: 0.75;
+      }
+      .postage-stamp {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 46px;
+        border: 1px dashed var(--sheet-border);
+        border-radius: 2px;
+        background: var(--sheet-slip);
+        color: var(--sheet-olive);
+      }
+      h1.title {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: clamp(2.15rem, 4.6vw, 3rem);
+        font-weight: 500;
+        line-height: 1.15;
+        color: var(--sheet-ink);
+        margin: 1.35rem 0 0.65rem;
+        text-wrap: balance;
+      }
+      .subtitle {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-style: italic;
+        font-size: 1.38rem;
+        color: var(--sheet-ink-2);
+        margin: 0;
+        line-height: 1.4;
+      }
+      .ornament {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin: 2rem 0;
+        color: var(--sheet-accent);
+      }
+      .ornament::before, .ornament::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--sheet-border);
+      }
+      .reddit-ref {
+        background: var(--sheet-slip);
+        border: 1px solid var(--sheet-border);
+        border-radius: 8px;
+        padding: 0.9rem 1.2rem;
+        margin-bottom: 2.25rem;
+      }
+      .reddit-ref summary {
+        list-style: none;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+      }
+      .reddit-ref summary::-webkit-details-marker { display: none; }
+      .reddit-summary-left { min-width: 0; display: flex; flex-direction: column; }
+      .reddit-kicker {
+        font-family: "Caveat", cursive;
+        font-size: 1.15rem;
+        line-height: 1.05;
+        color: var(--sheet-accent);
+      }
+      .reddit-title {
+        font-size: 0.88rem;
+        color: var(--sheet-ink);
+        margin-top: 0.2rem;
+      }
+      .reddit-toggle {
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: var(--sheet-accent);
+        white-space: nowrap;
+      }
+      .reddit-body {
+        margin-top: 0.95rem;
+        padding-top: 0.95rem;
+        border-top: 1px solid var(--sheet-border);
+        font-size: 0.9rem;
+        color: var(--sheet-ink-2);
+      }
+      .reddit-meta { font-size: 0.78rem; color: var(--sheet-muted); margin: 0 0 0.75rem; }
+      .reddit-text { line-height: 1.65; }
+      .reddit-image-wrap img { max-width: 100%; border-radius: 8px; margin-top: 0.75rem; border: 1px solid var(--sheet-border); }
+      .reddit-link-wrap { margin: 0.9rem 0 0; }
+      .reddit-link-wrap a { color: var(--sheet-accent); text-decoration: none; font-size: 0.84rem; font-weight: 500; }
+      .letter-body {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: 1.32rem;
+        line-height: 1.85;
+        color: var(--sheet-ink);
+        word-break: break-word;
+      }
+      .letter-body.dropcap > p:first-of-type::first-letter {
+        font-size: 3.5rem;
+        float: left;
+        line-height: 0.85;
+        padding: 0.08em 0.14em 0 0;
+        font-weight: 500;
+        color: var(--sheet-accent);
+      }
+      .letter-body p { margin: 0 0 1.3em; }
+      .letter-body h1, .letter-body h2, .letter-body h3 {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        color: var(--sheet-ink);
+        font-weight: 600;
+        line-height: 1.28;
+        margin: 1.75em 0 0.65em;
+      }
+      .letter-body blockquote {
+        margin: 1.75em 0;
+        padding: 1.1em 1.4em;
+        border-top: 1px solid var(--sheet-border);
+        border-bottom: 1px solid var(--sheet-border);
+        font-style: italic;
+        color: var(--sheet-ink-2);
+      }
+      .letter-body ul, .letter-body ol { padding-left: 1.5em; margin-bottom: 1.3em; }
+      .letter-body u { text-decoration: underline; text-decoration-color: var(--sheet-accent); text-underline-offset: 4px; }
+      .letter-body hr { border: 0; height: 1px; background: var(--sheet-border); margin: 2em auto; width: 42%; }
+      .end-mark {
+        margin-top: 3.25rem;
+        padding-top: 1.75rem;
+        border-top: 1px solid var(--sheet-border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .end-mark-left {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: var(--seal);
+      }
+      .end-phrase {
+        font-family: "Caveat", cursive;
+        font-size: 1.55rem;
+        color: var(--sheet-ink-2);
+      }
+      .sprig-svg {
+        color: var(--sheet-olive);
+        opacity: 0.75;
+      }
+      .collection-return {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.25rem;
+        margin-top: 2rem;
+      }
+      .dot-sep {
+        color: var(--border-desk);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a href="../../" class="brand">Postscript</a>
+        <a href="../../" class="back-link">All letters</a>
+      </div>
+    </header>
+    <main>
+      <div class="gate-wrap" id="passcode-gate">
+        <div class="envelope-card" style="padding: 2.5rem 2rem;">
+          <div class="envelope-flap" aria-hidden="true"></div>
+          <div style="text-align:center;">
+            <p class="salutation" style="color:var(--sheet-accent);font-size:1.45rem;">A quiet place for words</p>
+            <h1 class="title" style="margin:0.25rem 0 0.4rem;font-size:2.2rem;">Postscript</h1>
+            <p class="meta" style="margin:0;">Enter the password to open these pages.</p>
+          </div>
+          <div class="ornament" aria-hidden="true" style="margin:1.5rem 0;">
+            <svg width="36" height="16" viewBox="0 0 36 16" fill="none">
+              <path d="M4 10C10 9.5 14.5 7.5 18 4C21.5 7.5 26 9.5 32 10" stroke="currentColor" stroke-width="1.05" stroke-linecap="round" />
+              <path d="M18 4V13" stroke="currentColor" stroke-width="1.05" stroke-linecap="round" />
+            </svg>
+          </div>
+          <form id="passcode-form">
+            <label for="passcode-input" style="font-size:0.78rem;font-weight:500;color:var(--sheet-ink-2);">Password</label>
+            <div class="gate-input-wrap">
+              <input id="passcode-input" class="gate-input" type="password" placeholder="Enter password…" autocomplete="off" autofocus />
+              <button type="button" class="gate-toggle-btn" id="passcode-toggle">Show</button>
+            </div>
+            <p class="gate-error" id="passcode-error" style="display:none;" role="alert">That password is incorrect. Please try again.</p>
+            <button type="submit" class="gate-submit">
+              
+    <svg width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <circle cx="16" cy="16" r="12.5" fill="currentColor" fill-opacity="0.14" stroke="currentColor" stroke-width="1.15" stroke-opacity="0.8" />
+      <circle cx="16" cy="16" r="9.2" stroke="currentColor" stroke-width="0.85" stroke-opacity="0.45" stroke-dasharray="2 2" />
+      <path d="M16 10.5L17.3 14.7L21.5 16L17.3 17.3L16 21.5L14.7 17.3L10.5 16L14.7 14.7L16 10.5Z" stroke="currentColor" stroke-width="1.15" stroke-linejoin="round" />
+    </svg>
+              <span>Open Postscript</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="envelope-wrap" id="envelope-view">
+        <div class="envelope-card">
+          <div class="envelope-flap" aria-hidden="true"></div>
+          <div class="header-row">
+            <span class="salutation" style="font-size:1.3rem;color:var(--sheet-muted);">November 27, 2026</span>
+            
+    <div class="postmark-group" aria-hidden="true">
+      <svg width="46" height="46" viewBox="0 0 52 52" fill="none" class="postmark-svg">
+        <circle cx="26" cy="26" r="22" stroke="currentColor" stroke-width="1" stroke-dasharray="3 2" />
+        <circle cx="26" cy="26" r="16" stroke="currentColor" stroke-width="0.8" />
+        <text x="26" y="23" text-anchor="middle" fill="currentColor" font-size="6" letter-spacing="1.2" font-family="Plus Jakarta Sans, sans-serif">POSTSCRIPT</text>
+        <text x="26" y="32" text-anchor="middle" fill="currentColor" font-size="6.5" font-weight="600" letter-spacing="0.8" font-family="JetBrains Mono, monospace">NOV 27</text>
+      </svg>
+      <div class="postage-stamp">
+        <svg width="20" height="22" viewBox="0 0 20 22" fill="none">
+          <path d="M10 19V5M10 13C7.5 13 5.8 11.2 5.5 8.5C8 8.5 9.6 10.2 10 13ZM10 10.5C12.5 10.5 14.2 8.7 14.5 6C12 6 10.4 7.7 10 10.5Z" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+    </div>
+          </div>
+          <div class="envelope-center">
+            <p class="salutation">For Neonate,</p>
+            <h1 class="title" style="margin-top:0.5rem;">A Little More Like Herself</h1>
+            <p class="envelope-reply">In reply to: Idk…it’s not that serious..</p>
+          </div>
+          <div class="envelope-actions">
+            <button type="button" class="open-seal-btn" id="open-envelope-btn">
+              
+    <svg width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <circle cx="16" cy="16" r="12.5" fill="currentColor" fill-opacity="0.14" stroke="currentColor" stroke-width="1.15" stroke-opacity="0.8" />
+      <circle cx="16" cy="16" r="9.2" stroke="currentColor" stroke-width="0.85" stroke-opacity="0.45" stroke-dasharray="2 2" />
+      <path d="M16 10.5L17.3 14.7L21.5 16L17.3 17.3L16 21.5L14.7 17.3L10.5 16L14.7 14.7L16 10.5Z" stroke="currentColor" stroke-width="1.15" stroke-linejoin="round" />
+    </svg>
+              <span>Open letter</span>
+            </button>
+            <span class="envelope-caption">A page kept just for you</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="letter-wrap" id="letter-view">
+        <div class="sheet">
+          <div class="header-row">
+            <div>
+              <p class="salutation">For Neonate,</p>
+              <p class="meta">November 27, 2026</p>
+            </div>
+            
+    <div class="postmark-group" aria-hidden="true">
+      <svg width="46" height="46" viewBox="0 0 52 52" fill="none" class="postmark-svg">
+        <circle cx="26" cy="26" r="22" stroke="currentColor" stroke-width="1" stroke-dasharray="3 2" />
+        <circle cx="26" cy="26" r="16" stroke="currentColor" stroke-width="0.8" />
+        <text x="26" y="23" text-anchor="middle" fill="currentColor" font-size="6" letter-spacing="1.2" font-family="Plus Jakarta Sans, sans-serif">POSTSCRIPT</text>
+        <text x="26" y="32" text-anchor="middle" fill="currentColor" font-size="6.5" font-weight="600" letter-spacing="0.8" font-family="JetBrains Mono, monospace">NOV 27</text>
+      </svg>
+      <div class="postage-stamp">
+        <svg width="20" height="22" viewBox="0 0 20 22" fill="none">
+          <path d="M10 19V5M10 13C7.5 13 5.8 11.2 5.5 8.5C8 8.5 9.6 10.2 10 13ZM10 10.5C12.5 10.5 14.2 8.7 14.5 6C12 6 10.4 7.7 10 10.5Z" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+    </div>
+          </div>
+          <h1 class="title">A Little More Like Herself</h1>
+          <p class="subtitle">For the little soul who deserves to feel at home in her own skin.</p>
+          <div class="ornament" aria-hidden="true">
+            <svg width="36" height="16" viewBox="0 0 36 16" fill="none">
+              <path d="M4 10C10 9.5 14.5 7.5 18 4C21.5 7.5 26 9.5 32 10" stroke="currentColor" stroke-width="1.05" stroke-linecap="round" />
+              <path d="M18 4V13" stroke="currentColor" stroke-width="1.05" stroke-linecap="round" />
+              <path d="M18 8.5C15.8 8.5 14.2 7.2 13.8 5.4C15.7 5.3 17.3 6.6 18 8.5Z" stroke="currentColor" stroke-width="1" stroke-linejoin="round" />
+              <path d="M18 9.5C20.2 9.5 21.8 8.2 22.2 6.4C20.3 6.3 18.7 7.6 18 9.5Z" stroke="currentColor" stroke-width="1" stroke-linejoin="round" />
+            </svg>
+          </div>
+          
+      <details class="reddit-ref">
+        <summary>
+          <span class="reddit-summary-left">
+            <span class="reddit-kicker">Written in reply to</span>
+            <span class="reddit-title">Idk…it’s not that serious..</span>
+          </span>
+          <span class="reddit-toggle">Read note</span>
+        </summary>
+        <div class="reddit-body">
+          <p class="reddit-meta">r/Personal Post · u/Neonate · 26 November, 2026</p>
+          
+          
+          <p class="reddit-link-wrap"><a href="https://www.reddit.com/user/sxgar_core/comments/1y5v4ma/idkits_not_that_serious/" target="_blank" rel="noopener noreferrer">View original post on Reddit ↗</a></p>
+        </div>
+      </details>
+          <article class="letter-body dropcap">
+            <p>Kiddo...</p><p>First of all.. I think you should stop downplaying how much this matters to you just because it might seem like a small thing to someone else...</p><p>You found something you genuinely enjoy.. Something that excites you enough that you wanted to experiment with it.. Put outfits together.. Try different makeup and accessories.. And finally wear something that feels a little closer to the way you see yourself...</p><p>Of course you're going to feel disappointed when the people around you respond with jokes or comments that make you feel silly for enjoying it...</p><p>And I want to start with your mother...</p><p>I understand that she might not intend to hurt you with those remarks... Perhaps she thinks she's being funny.. Or perhaps she genuinely doesn't understand the appeal of the aesthetic... But even when a comment is made jokingly.. It can still make someone hesitant to express themselves...</p><p>Especially when it's something you're excited about...</p><p>I think there's a difference between a parent expressing a concern about an outfit and making remarks that leave their child feeling embarrassed about wearing it...</p><p>If she doesn't like a particular dress.. She can explain why... If she has concerns about how it fits with your hijab.. You can have that conversation... But comments about looking dead or comparing you to someone in a dismissive way aren't particularly helpful...</p><p>And I wouldn't want you to feel that you have to laugh at every comment just to keep the atmosphere comfortable...</p><p>You could tell her quite plainly that you know she might not mean anything by it.. But you'd appreciate it if she didn't make fun of something you're genuinely excited about... You aren't asking her to love every outfit you wear.. Just to let you enjoy it without feeling embarrassed.</p><p>Now.. Your dad's response is a little different...</p><p>From what you've described.. He seems relatively accepting of your interest.. Even if he has certain reservations about how far you take it...</p><p>I think you could use that as an opportunity to have an actual conversation with him about what Goth means to you...</p><p>Not every parent will immediately understand a subculture simply because their child likes it... Sometimes they need to see that there's more to it than the clothes they notice first...</p><p>And since he already seems willing to buy you clothes you like.. Perhaps you could show him some of the outfits you're interested in and explain what you appreciate about them... The silhouettes.. The fabrics.. The lace.. The accessories and the historical influences...</p><p>You might find that he understands more than you expect once he sees the thought behind it...</p><p>Now.. Your cousin...</p><p>I'm going to be honest.. I don't think calling you a larper was particularly fair...</p><p>There's a difference between pretending to belong to a subculture for attention and genuinely enjoying its fashion.. Music.. History or artistic expression...</p><p>You don't have to meet some imaginary qualification before you're allowed to enjoy something...</p><p>And you certainly don't have to sexualise your appearance to prove that your interest is genuine...</p><p>I think that's an important distinction you made in your post...</p><p>Goth isn't simply a particular way of dressing... It has a much wider cultural and musical history.. Alongside different artistic influences.. Fashion movements and individual interpretations... Romantic goth itself draws on elements that can be quite different from what people commonly associate with the word...</p><p>So no.. You don't have to fit somebody else's idea of what a goth person should look like...</p><p>You don't need to dress a certain way every day.. Own a particular wardrobe.. Listen to every band someone recommends or prove how much you know before you can call yourself interested in it...</p><p>Explore it because you enjoy it...</p><p>And don't let someone else's interpretation of your style turn something you love into an examination you feel you have to pass...</p><p>I also think you should remember that your cousin's comments don't have to determine how you feel about the dress...</p><p>You were excited to show him something new... You were already a little nervous about wearing it.. And instead of getting to enjoy that moment.. You ended up having to defend your intentions...</p><p>I can understand why that stayed with you...</p><p>But don't let that experience make you reluctant to share things you're excited about with people who might actually appreciate them...</p><p>And speaking of the dress.. I think there's a practical conversation worth having with your mother...</p><p>You mentioned that she showed you similar dresses online.. So perhaps the two of you aren't as far apart on the overall style as you initially thought... The disagreement seems to be more about particular cuts and how comfortable she is with you wearing them alongside hijab...</p><p>Rather than getting stuck on whether the dress is technically too tight or whether certain parts are covered by your sleeves or bag.. I'd suggest looking at the outfit as a whole...</p><p>You could experiment with layering.. Different fabrics.. A longer outer piece.. Or accessories that preserve the shape and character of the outfit while making it something you're comfortable wearing with hijab...</p><p>There are plenty of ways to explore a romantic gothic look without having to rely on one particular dress...</p><p>And perhaps you could put together a few outfits with your mother... Not so that she gets to decide your entire aesthetic.. But so that you can find some common ground while still having a say in what you wear...</p><p>You could even show her complete outfits rather than individual garments... Sometimes people have a much easier time understanding a style when they can see how all its elements work together...</p><p>But I don't want you to mistake compromise for giving up your identity...</p><p>You can respect your mother's preferences and still develop your own taste... You can be modest and still be creative... And you can wear hijab without feeling that your personal style has to disappear underneath it...</p><p>Now.. I want to talk about your favourite girl cousin...</p><p>I think it's rather lovely that you have someone with whom you can share these interests without having to constantly explain yourself...</p><p>Someone who understands your excitement.. Encourages your creativity and makes you feel comfortable being yourself...</p><p>And I hope you appreciate that connection...</p><p>You mentioned that you have similar hobbies and can talk openly with each other... Perhaps you could make a little project out of exploring this aesthetic together...</p><p>Put together outfit ideas.. Share music and artwork.. Look at different gothic fashion influences.. Experiment with accessories or even create moodboards of the styles you both like...</p><p>You don't necessarily need to buy an entirely new wardrobe to explore something new... Sometimes you can do quite a lot with pieces you already own.. A few carefully chosen accessories and a little creativity...</p><p>And since she seems to understand the style.. She might also be a good person to ask for honest opinions when you're experimenting with outfits...</p><p>Just remember to enjoy the process rather than turning it into another expectation you have to meet...</p><p>And now.. The part of your post that I found particularly interesting...</p><p>You said you're sick of looking normal...</p><p>I don't think you're necessarily tired of the clothes themselves... I think you're tired of feeling as though the way you look doesn't communicate anything about the person you are...</p><p>You want your appearance to have a little more character... You want someone to see your outfit and recognise that there was intention behind it... That you chose those particular pieces because you liked them.. Not simply because they were convenient or what everyone else happened to be wearing...</p><p>And I think that's a perfectly reasonable thing to want...</p><p>There's something quite personal about developing your own style... It's a form of creative expression... You get to take different influences.. Combine things you like and gradually create something that feels recognisably yours...</p><p>But I want you to approach it as an exploration rather than a complete transformation...</p><p>Don't feel that you need to replace everything you own or suddenly become a different person to make this aesthetic yours...</p><p>Start with the things that genuinely appeal to you... Perhaps it's the jewellery.. The darker colour palette.. Lace details.. Certain silhouettes.. Makeup or the romantic influences...</p><p>Try different combinations... Take pictures of outfits you like.. Keep a collection of references and gradually figure out which elements you enjoy most...</p><p>You might discover that your personal style becomes a mixture of several influences rather than one perfectly defined category...</p><p>And that's completely fine...</p><p>You don't have to dress like a particular version of a goth person to be allowed to enjoy gothic fashion...</p><p>I also want to address something you said about being an introvert...</p><p>You mentioned that you've always been the quiet kid... That you don't particularly mind it.. That you had lovely friends.. But that perhaps you're tired of being invisible and pushed around simply because you're quiet...</p><p>I think there's an important distinction here...</p><p>Being introverted doesn't mean you have to make yourself smaller... Being shy doesn't mean you have to let other people decide how much space you're allowed to occupy...</p><p>You can be quiet and still have a strong sense of identity... You can dislike attention and still enjoy being noticed for something you've created or chosen... You can be gentle without being someone people feel entitled to overlook...</p><p>And perhaps developing your own style is one small way of becoming more comfortable expressing that side of yourself...</p><p>But don't put too much pressure on it...</p><p>You don't need to become louder.. More outgoing or noticeably different overnight... You don't need to reinvent your personality to become someone worth noticing...</p><p>You're already someone...</p><p>What you're doing now is finding more ways to let the outside reflect some of what's already inside...</p><p>And I hope you don't lose sight of that distinction...</p><p>I would also encourage you to practise expressing your preferences in other little ways... Choose what you want to wear without immediately apologising for it... Share your interests without feeling the need to justify every detail... Disagree when someone makes an unfair assumption about you...</p><p>You don't have to turn every disagreement into a confrontation... Sometimes a simple.. "I just like it.. You don't have to understand it".. is more than enough...</p><p>And if someone makes fun of something you enjoy.. You don't have to spend the rest of the conversation convincing them otherwise...</p><p>Let people have their opinions... Just don't automatically make those opinions your own...</p><p>One last thing...</p><p>I hope you continue exploring this side of yourself even if your family doesn't immediately understand it...</p><p>Not every interest needs everyone's approval to be meaningful... And not every part of your personality needs to be understood by everyone around you...</p><p>Find the people who appreciate your creativity.. Learn about the things that interest you.. Experiment.. Make mistakes.. Change your mind and discover what you genuinely like...</p><p>Maybe you'll settle into romantic goth.. Maybe your style will evolve into something entirely different... Perhaps you'll eventually combine several aesthetics in a way that nobody else would think of...</p><p>That's the fun part... You get to discover it...</p><p>And for the record.. I think you should absolutely enjoy being excited about a new dress... You don't have to feel embarrassed about that...</p><p>So go explore your little gothic world.. Kiddo... Take your time with it.. Have fun putting outfits together and don't let the need to fit somebody else's definition take away the enjoyment of finding your own...</p><p>You don't need to become someone else...</p><p>Just give yourself the freedom to express the person you already are...</p><p>Wherever life takes you.. I hope you never forget that there will always be someone quietly wishing the world is kinder to you.. Proud of the person you're becoming.. And grateful that you exist...</p>
+          </article>
+          <div class="end-mark">
+            <div class="end-mark-left">
+              
+    <svg width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <circle cx="16" cy="16" r="12.5" fill="currentColor" fill-opacity="0.14" stroke="currentColor" stroke-width="1.15" stroke-opacity="0.8" />
+      <circle cx="16" cy="16" r="9.2" stroke="currentColor" stroke-width="0.85" stroke-opacity="0.45" stroke-dasharray="2 2" />
+      <path d="M16 10.5L17.3 14.7L21.5 16L17.3 17.3L16 21.5L14.7 17.3L10.5 16L14.7 14.7L16 10.5Z" stroke="currentColor" stroke-width="1.15" stroke-linejoin="round" />
+    </svg>
+              <span class="end-phrase">End of letter.</span>
+            </div>
+            <svg width="36" height="36" viewBox="0 0 56 56" fill="none" class="sprig-svg" aria-hidden="true">
+              <path d="M14 44C20 35 28 24 41 13" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" />
+              <path d="M23 32C18 31 15 27 15 22C20 22 23 26 23 32Z" stroke="currentColor" stroke-width="1.05" stroke-linejoin="round" />
+              <path d="M26 28C32 29 36 27 38 22C32 21 28 23 26 28Z" stroke="currentColor" stroke-width="1.05" stroke-linejoin="round" />
+              <path d="M32 21C28 19 26 15 27 11C31 12 33 16 32 21Z" stroke="currentColor" stroke-width="1.05" stroke-linejoin="round" />
+            </svg>
+          </div>
+        </div>
+        <div class="collection-return">
+          <a href="../../" class="back-link">← All letters in the Reading Room</a>
+          <span class="dot-sep" aria-hidden="true">·</span>
+          <button type="button" class="back-link" id="refold-envelope-btn">Refold envelope</button>
+        </div>
+      </div>
+    </main>
+    <script>
+      (function () {
+        var key = 'ps_opened_a-little-more-like-herself';
+        var root = document.documentElement;
+        var expectedHash = '0d4c4ee51a8fef7094c11fc36656383be0c3a5fcfff7262249b8b1515409397d';
+        var salt = 'postscript-correspondence-v1:';
+
+        function toHex(buf) {
+          var arr = new Uint8Array(buf);
+          var s = '';
+          for (var i = 0; i < arr.length; i++) s += arr[i].toString(16).padStart(2, '0');
+          return s;
+        }
+        function sha256Fallback(msg) {
+          var u = new TextEncoder().encode(msg);
+          var K = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+          var H = [0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+          var bl = u.length * 8, pl = Math.ceil((u.length + 9) / 64) * 64, p = new Uint8Array(pl);
+          p.set(u); p[u.length] = 0x80;
+          var v = new DataView(p.buffer);
+          v.setUint32(pl - 4, bl >>> 0, false); v.setUint32(pl - 8, Math.floor(bl / 4294967296), false);
+          var w = new Uint32Array(64);
+          function r(n, x) { return (x >>> n) | (x << (32 - n)); }
+          for (var o = 0; o < pl; o += 64) {
+            for (var i = 0; i < 16; i++) w[i] = v.getUint32(o + i * 4, false);
+            for (var i = 16; i < 64; i++) {
+              var s0 = r(7, w[i-15]) ^ r(18, w[i-15]) ^ (w[i-15] >>> 3);
+              var s1 = r(17, w[i-2]) ^ r(19, w[i-2]) ^ (w[i-2] >>> 10);
+              w[i] = (w[i-16] + s0 + w[i-7] + s1) >>> 0;
+            }
+            var a=H[0],b=H[1],c=H[2],d=H[3],e=H[4],f=H[5],g=H[6],h=H[7];
+            for (var i = 0; i < 64; i++) {
+              var S1 = r(6,e)^r(11,e)^r(25,e), ch = (e&f)^(~e&g), t1 = (h+S1+ch+K[i]+w[i])>>>0;
+              var S0 = r(2,a)^r(13,a)^r(22,a), mj = (a&b)^(a&c)^(b&c), t2 = (S0+mj)>>>0;
+              h=g; g=f; f=e; e=(d+t1)>>>0; d=c; c=b; b=a; a=(t1+t2)>>>0;
+            }
+            H[0]=(H[0]+a)>>>0; H[1]=(H[1]+b)>>>0; H[2]=(H[2]+c)>>>0; H[3]=(H[3]+d)>>>0;
+            H[4]=(H[4]+e)>>>0; H[5]=(H[5]+f)>>>0; H[6]=(H[6]+g)>>>0; H[7]=(H[7]+h)>>>0;
+          }
+          var out = new Uint8Array(32), ov = new DataView(out.buffer);
+          for (var i = 0; i < 8; i++) ov.setUint32(i * 4, H[i], false);
+          return toHex(out.buffer);
+        }
+        function verifyCode(val) {
+          var salted = salt + val;
+          if (window.crypto && window.crypto.subtle) {
+            return window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(salted)).then(function (buf) {
+              return toHex(buf) === expectedHash;
+            });
+          }
+          return Promise.resolve(sha256Fallback(salted) === expectedHash);
+        }
+
+        var form = document.getElementById('passcode-form');
+        var inputEl = document.getElementById('passcode-input');
+        var errEl = document.getElementById('passcode-error');
+        var toggleEl = document.getElementById('passcode-toggle');
+        if (toggleEl && inputEl) {
+          toggleEl.addEventListener('click', function () {
+            var isPass = inputEl.type === 'password';
+            inputEl.type = isPass ? 'text' : 'password';
+            toggleEl.textContent = isPass ? 'Hide' : 'Show';
+          });
+        }
+        if (form && inputEl) {
+          form.addEventListener('submit', function (ev) {
+            ev.preventDefault();
+            verifyCode(inputEl.value).then(function (ok) {
+              if (ok) {
+                if (errEl) errEl.style.display = 'none';
+                root.removeAttribute('data-locked');
+              } else {
+                if (errEl) errEl.style.display = 'block';
+              }
+            });
+          });
+        }
+
+        try {
+          if (sessionStorage.getItem(key) !== '1') {
+            root.setAttribute('data-state', 'sealed');
+          }
+        } catch (e) {
+          root.setAttribute('data-state', 'sealed');
+        }
+        var openBtn = document.getElementById('open-envelope-btn');
+        var refoldBtn = document.getElementById('refold-envelope-btn');
+        if (openBtn) {
+          openBtn.addEventListener('click', function () {
+            root.removeAttribute('data-state');
+            try { sessionStorage.setItem(key, '1'); } catch (e) {}
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
+        }
+        if (refoldBtn) {
+          refoldBtn.addEventListener('click', function () {
+            root.setAttribute('data-state', 'sealed');
+            try { sessionStorage.removeItem(key); } catch (e) {}
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>
